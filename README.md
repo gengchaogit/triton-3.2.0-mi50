@@ -102,6 +102,9 @@ pip install -r requirements/rocm.txt
 export PYTORCH_ROCM_ARCH="gfx906"
 python3 setup.py develop --verbose
 
+#如果本次安装某些地方安装依赖覆盖掉了魔改版的triton需要你返回dist重新安装编译好的triton
+#pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+
 # vllm amd双卡启动命令-随便写的
 # ps:可以接入dify/openwebui等支持openai接口的前端进行测试
 VLLM_USE_TRITON_FLASH_ATTN=1 ROCM_PATH=/opt/rocm TORCH_BLAS_PREFER_HIPBLASLT=0 PYTORCH_ROCM_ARCH=gfx906 vllm serve /data1/DeepSeek-R1-Distill-Llama-8B-Q4_K_M.gguf --port 8099 --max-model-len 4096 --tensor-parallel-size 2 --served-model-name vllm

@@ -1,6 +1,7 @@
 Updated:20250404
 # Installation
 魔改最新版Triton 3.2.0安装指南 推荐使用python3.10这样的话跟我的测试环境完全一样
+
 有问题可以在issue区留言或者进qq群:1028429001 ->本地部署deepseek-r1:671b纯cpu方案
 
 本介绍基于https://github.com/Said-Akbar/triton-gcn5/blob/gcn5-edits/README.md (需要triton3.1.0可以去这里自取)

@@ -1,3 +1,77 @@
+Updated:20250404
+# Installation
+魔改最新版Triton 3.2.0安装指南
+有问题可以在issue区留言或者进qq群:1028429001 ->本地部署deepseek-r1:671b纯cpu方案
+
+本介绍基于https://github.com/Said-Akbar/triton-gcn5/blob/gcn5-edits/README.md (需要triton3.1.0可以去这里自取)
+
+请注意,不要尝试rocm 6.2.2之外的版本, triton与vllm版本依赖严重, 6.3.3是测试版尝试过全是报错.
+
+This is a fork of triton for AMD MI25/50/60.
+I assume you already have rocm 6.2.2 installed with GPU drivers.
+If not, use these commands (assuming you have Ubuntu 22.04):
+
+Install rocm 6.2.2
+```
+sudo apt update
+sudo apt install "linux-headers-$(uname -r)" "linux-modules-extra-$(uname -r)"
+sudo usermod -a -G render,video $LOGNAME # Add the current user to the render and video groups
+wget https://repo.radeon.com/amdgpu-install/6.2.2/ubuntu/jammy/amdgpu-install_6.2.60202-1_all.deb
+sudo apt install ./amdgpu-install_6.2.60202-1_all.deb
+sudo apt update
+sudo apt install amdgpu-dkms rocm
+# linker
+sudo tee --append /etc/ld.so.conf.d/rocm.conf <<EOF
+/opt/rocm/lib
+/opt/rocm/lib64
+EOF
+sudo ldconfig
+
+# path
+export PATH=$PATH:/opt/rocm-6.2.2/bin
+
+# verify drivers
+dkms status
+
+# You need to close all windows and reboot to make changes effective.
+reboot
+```
+
+Now you have rocm 6.2.2.
+
+Install triton 3.2.0.
+
+```
+# create venv
+python3 -m venv vllmenv
+source vllmenv/bin/activate
+git clone https://github.com/gengchaogit/triton-3.2.0-mi50.git
+cd triton-3.2.0-mi50
+#这一步非常关键 本次改动只针对release最新版3.2.0
+git checkout release/3.2.x
+cd python
+# install triton req’s
+pip3 install ninja cmake wheel pybind11
+# install torch first
+pip3 install --no-cache-dir --pre torch>=2.6 torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.2
+# build triton
+# 这里注意，必须要构建whl包，因为安装中的失败、重新安装依赖被覆盖等原因，我们可能需要最后安装完成的时候重新装一遍这个whl，一次构建多次安装
+pip wheel . -w dist/ --config-settings="--parallel=16"
+# 生成的文件将会出现在triton-3.2.0-mi50/python/dist/triton-3.2.0-cp310-cp310-linux_x86_64.whl (因为我是python3.10所以这里是310，根据python不同版本可能是311也可能是312)
+cd dist
+pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+# 将来如果重新安装triton-3.2.0的话只需重新cd dist & triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+```
+
+End of installation.
+
+教程结束，现在你可以编译最新版本的vllm了，传送门 https://github.com/vllm-project/vllm
+
+
+
+
+下面的可以不用看，原始的官方readme
+
 <div align="center">
   <img src="https://lh5.googleusercontent.com/wzQKEsTFkrgNQO9JjhGH5wFvslJr1saLtLaJ_a6Fp_gNENpvt3VG7BmztwngU9hFJaU4CPwGiw1opQtDvTkLrxWRbO_a12Q-pdESWHgtmheIHcPbOL5ZMC4TSiJVe5ty1w=w3517" alt="Triton logo">
 </div>

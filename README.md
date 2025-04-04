@@ -61,6 +61,12 @@ pip wheel . -w dist/ --config-settings="--parallel=16"
 cd dist
 pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
 # 将来如果重新安装triton-3.2.0的话只需重新cd dist & triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+# 验证安装是否成功
+python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+
+预期输出
+CUDA available: True
+
 ```
 
 End of installation.

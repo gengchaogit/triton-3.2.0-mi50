@@ -77,9 +77,9 @@ CUDA available: True
 
 End of installation.
 
-Triton3.2.0 编译安装教程结束，现在你可以编译最新版本的vllm了，传送门 https://github.com/vllm-project/vllm
+Triton3.2.0 编译安装教程结束，现在你可以编译最新版本的vllm了
 
-下面是安装最新版vllm教程
+下面是安装最新版vllm教程 或者你可以自己去看官方文档，传送门 https://github.com/vllm-project/vllm
 ```
 # Clone git
 git clone https://github.com/vllm-project/vllm.git

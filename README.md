@@ -71,8 +71,32 @@ CUDA available: True
 
 End of installation.
 
-教程结束，现在你可以编译最新版本的vllm了，传送门 https://github.com/vllm-project/vllm
+Triton3.2.0 编译安装教程结束，现在你可以编译最新版本的vllm了，传送门 https://github.com/vllm-project/vllm
 
+下面是安装最新版vllm教程
+```
+# Clone git
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+source vllmenv/bin/activate
+pip install --upgrade pip
+
+# Build & install AMD SMI
+pip install /opt/rocm/share/amd_smi
+
+# Install dependencies
+pip install --upgrade numba scipy huggingface-hub[cli,hf_transfer] setuptools_scm
+pip install "numpy<2"
+pip install -r requirements/rocm.txt
+
+# Build vLLM for MI50.
+export PYTORCH_ROCM_ARCH="gfx906"
+python3 setup.py develop --verbose
+
+# vllm amd双卡启动命令-随便写的
+# ps:可以接入dify/openwebui等支持openai接口的前端进行测试
+VLLM_USE_TRITON_FLASH_ATTN=1 ROCM_PATH=/opt/rocm TORCH_BLAS_PREFER_HIPBLASLT=0 PYTORCH_ROCM_ARCH=gfx906 vllm serve /data1/DeepSeek-R1-Distill-Llama-8B-Q4_K_M.gguf --port 8099 --max-model-len 4096 --tensor-parallel-size 2 --served-model-name vllm
+```
 
 
 

@@ -43,8 +43,13 @@ Install triton 3.2.0.
 
 ```
 # create venv
+#如果你不想使用python venv可以使用conda代替python3 -m venv vllmenv
+#conda create --name vllmnew  python=3.10
+#conda activate vllmnew
+
 python3 -m venv vllmenv
 source vllmenv/bin/activate
+
 git clone https://github.com/gengchaogit/triton-3.2.0-mi50.git
 cd triton-3.2.0-mi50
 #这一步非常关键 本次改动只针对release最新版3.2.0
@@ -78,6 +83,9 @@ Triton3.2.0 编译安装教程结束，现在你可以编译最新版本的vllm�
 # Clone git
 git clone https://github.com/vllm-project/vllm.git
 cd vllm
+#如果你使用conda 使用下面命令代替source vllmenv/bin/activate
+#conda activate vllmnew
+
 source vllmenv/bin/activate
 pip install --upgrade pip
 
@@ -96,6 +104,14 @@ python3 setup.py develop --verbose
 # vllm amd双卡启动命令-随便写的
 # ps:可以接入dify/openwebui等支持openai接口的前端进行测试
 VLLM_USE_TRITON_FLASH_ATTN=1 ROCM_PATH=/opt/rocm TORCH_BLAS_PREFER_HIPBLASLT=0 PYTORCH_ROCM_ARCH=gfx906 vllm serve /data1/DeepSeek-R1-Distill-Llama-8B-Q4_K_M.gguf --port 8099 --max-model-len 4096 --tensor-parallel-size 2 --served-model-name vllm
+
+#若conda环境启动遇到动态链接库问题
+conda install -c conda-forge libstdcxx-ng
+#预期输出
+(vllmnew) root@epyc:~# strings /root/miniconda3/envs/vllmnew/lib/libstdc++.so.6|grep GLIBCXX_3.4.30
+GLIBCXX_3.4.30
+GLIBCXX_3.4.30
+
 ```
 
 

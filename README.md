@@ -62,7 +62,7 @@ pip3 install ninja cmake wheel pybind11
 pip3 install --no-cache-dir --pre torch>=2.6 torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.2
 # build triton
 # 这里注意，必须要构建whl包，因为安装中的失败、重新安装依赖被覆盖等原因，我们可能需要最后安装完成的时候重新装一遍这个whl，一次构建多次安装
-pip wheel . -w dist/ --config-settings="--parallel=16"
+pip wheel . -w dist/
 # 生成的文件将会出现在triton-3.2.0-mi50/python/dist/triton-3.2.0-cp310-cp310-linux_x86_64.whl (因为我是python3.10所以这里是310，根据python不同版本可能是311也可能是312)
 cd dist
 pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall

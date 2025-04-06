@@ -1,5 +1,6 @@
 Updated:20250404
 # Installation
+请使用Ubuntu 22.04 多人测试24版本很多报错
 魔改最新版Triton 3.2.0安装指南 推荐使用python3.10这样的话跟我的测试环境完全一样
 
 有问题可以在issue区留言或者进qq群:1028429001 ->本地部署deepseek-r1:671b纯cpu方案

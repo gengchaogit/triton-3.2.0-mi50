@@ -14,7 +14,9 @@ This is a fork of triton for AMD MI25/50/60.
 I assume you already have rocm 6.2.2 installed with GPU drivers.
 If not, use these commands (assuming you have Ubuntu 22.04):
 
-Install rocm 6.2.2 AMD官方rocm安装说明 https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html
+Install rocm 6.2.2
+
+AMD官方rocm安装说明(不建议使用官方的，因为他现在默认是6.3.3) https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html
 ```
 sudo apt update
 sudo apt install "linux-headers-$(uname -r)" "linux-modules-extra-$(uname -r)"

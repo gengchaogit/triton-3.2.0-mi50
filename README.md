@@ -2,6 +2,18 @@ Updated:20250404
 # Installation
 请使用Ubuntu 22.04 多人测试24版本很多报错
 
+建议使用conda作为虚拟环境
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh
+eval "$(/root/miniconda3/bin/conda shell.bash hook)"
+conda init
+conda --version
+conda config --set auto_activate_base ture
+conda create --name vllm python=3.10
+conda activate vllm
+```
+
 魔改最新版Triton 3.2.0安装指南 推荐使用python3.10这样的话跟我的测试环境完全一样
 
 有问题可以在issue区留言或者进qq群:1028429001 ->本地部署deepseek-r1:671b纯cpu方案
@@ -105,6 +117,7 @@ pip install -r requirements/rocm.txt
 # Build vLLM for MI50.
 export PYTORCH_ROCM_ARCH="gfx906"
 python3 setup.py develop --verbose
+#如果遇到cmake 3.5的问题，就去那个文件里开头第十几行把小于3.5的3.x版本改成3.5保存即可
 
 #如果本次安装某些地方安装依赖覆盖掉了魔改版的triton需要你返回dist重新安装编译好的triton
 #pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall

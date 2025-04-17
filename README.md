@@ -10,8 +10,8 @@ eval "$(/root/miniconda3/bin/conda shell.bash hook)"
 conda init
 conda --version
 conda config --set auto_activate_base ture
-conda create --name vllm python=3.10
-conda activate vllm
+conda create --name vllmnew python=3.10
+conda activate vllmnew
 ```
 
 魔改最新版Triton 3.2.0安装指南 推荐使用python3.10这样的话跟我的测试环境完全一样

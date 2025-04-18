@@ -1,4 +1,107 @@
-Updated:20250404
+Updated:20250418 16:00
+
+因为本人买了10卡gpu服务器做测试，发现vllm对x99平台的多卡机器优化可能有问题，所以研究了另外一个张量并行的框架。
+
+下面有请 mlc-llm https://github.com/mlc-ai/mlc-llm
+
+很开心的说，安装该框架比较简单，而且该框架在amd架构的多卡机系统中有很高的gpu利用率，是目前发现的对amd的老卡支持最好的，但美中不足的是，模型需要特制模型，因此使用此框架唯一的缺点是需要重新下模型，而且只有一部分特制模型。
+应该可以对现有模型转换但是我还没有尝试。
+```
+测试结果 mi50*8
+qwq 32b q4f16 -----1卡16-18token/s，并发没测(10卡机实测)
+qwq 32b q4f16 -----2卡29-36token/s，并发60token/s (36token是特殊双路epyc4代环境跑出来的)
+qwq 32b q4f16 -----4卡30-35token/s,并发150-180token/s(10卡机实测)
+qwq 32b q4f16 -----8卡38-41token/s,并发280-300token/s(10卡机实测)
+```
+```
+已经安装conda的用户跳过此步骤，已经安装conda的用户跳过此步骤，已经安装conda的用户跳过此步骤
+建议使用conda作为虚拟环境
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh
+eval "$(/root/miniconda3/bin/conda shell.bash hook)"
+conda init
+conda --version
+conda config --set auto_activate_base ture
+conda create --name mlc python=3.10
+conda activate mlc
+```
+
+```
+已经安装rocm的用户跳过此步骤，已经安装rocm的用户跳过此步骤，已经安装rocm的用户跳过此步骤
+
+AMD官方rocm安装(不建议使用官方的，因为他现在默认是6.4)
+https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html
+
+sudo apt update
+sudo apt install "linux-headers-$(uname -r)" "linux-modules-extra-$(uname -r)"
+sudo usermod -a -G render,video $LOGNAME # Add the current user to the render and video groups
+wget https://repo.radeon.com/amdgpu-install/6.2.2/ubuntu/jammy/amdgpu-install_6.2.60202-1_all.deb
+sudo apt install ./amdgpu-install_6.2.60202-1_all.deb
+sudo apt update
+sudo apt install amdgpu-dkms rocm
+# linker
+sudo tee --append /etc/ld.so.conf.d/rocm.conf <<EOF
+/opt/rocm/lib
+/opt/rocm/lib64
+EOF
+sudo ldconfig
+
+# path
+export PATH=$PATH:/opt/rocm-6.2.2/bin
+
+# verify drivers
+dkms status
+
+# You need to close all windows and reboot to make changes effective.
+reboot
+```
+
+
+下面开始安装mlc-llm
+```
+已经创建该conda环境的用户跳过此步骤 conda create --name mlc python=3.10
+conda activate mlc
+conda install -c conda-forge libstdcxx-ng
+只需要这一条命令即可安装全部的环境，摆脱编译的烦恼(如果遇到timeout，可能需要开启代理)
+python -m pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-rocm62 mlc-ai-nightly-rocm62
+```
+
+下载模型qwq 32b q4f16(其余模型请到下面链接自己找),请只下载f16_1类型的模型,f16_0这种无法多卡并行
+
+https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC/tree/main
+```
+git lfs install
+GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC
+下载完模型后会在本地创建QwQ-32B-q4f16_1-MLC目录
+可以新开一个窗口不停使用命令查看目前下载的进度，git clone下载大文件不会显示进度
+du -sh QwQ-32B-q4f16_1-MLC
+```
+
+运行推理
+```
+mlc_llm serve /root/QwQ-32B-q4f16_1-MLC  --mode server --overrides "tensor_parallel_shards=2" --host 0.0.0.0
+
+温馨提示:
+1.rocm-smi -b 可以查看每张pcie的实时带宽
+2.q0f16是指未量化的 float16 格式
+3.如果要在多个 GPU 上启用张量并行，请 向配置生成命令添加参数。--tensor-parallel-shards $NGPU
+4.MLC 支持的量化完整列表 https://github.com/mlc-ai/mlc-llm/blob/main/python/mlc_llm/quantization/quantization.py#L29
+5.MLC LLM 中的引擎模式。我们提供了三种预设模式：local、interactive和server。默认模式为local。
+  5.1 local是指本地服务器部署，请求并发度较低。因此，最大批处理大小将设置为 4，最大总序列长度和预填充块大小将设置为模型的上下文窗口大小（或滑动窗口大小）。
+  5.2 interactive模式是指服务器以交互式方式使用，最多只能处理 1 个并发请求。因此，最大批处理大小将设置为 1，最大总序列长度和预填充块大小将设置为模型的上下文窗口大小（或滑动窗口大小）。
+  5.3 server模式指的是大型服务器用例，它可能处理大量并发请求，并希望尽可能多地使用 GPU 内存。在此模式下，我们将自动推断最大可能的最大批次大小和最大总序列长度。
+6. 更多的内容查看 https://llm.mlc.ai/docs/deploy/rest.html#rest-launch-server
+```
+
+triton的替换
+```
+因为不清楚mlc所安装的是否是魔改triton，如果你对性能不满意，可以安装自己编译的triton=3.2.0，该版本，可能对性能有略微的提升。
+请查看下面额外的triton相关的编译安装教程，使用下面的命令替换triton为自己编译的版本
+cd triton-3.2.0-mi50/python/dist/
+pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+```
+
+Updated:20250404----以下是vllm安装教程，mlc的不需要看，如果需要编译triton，可以只看triton部分
 # Installation
 请使用Ubuntu 22.04 多人测试24版本很多报错
 

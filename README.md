@@ -72,7 +72,7 @@ https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC/tree/main
 ```
 温馨提示:git clone应该无需代理
 git lfs install
-GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC
+git clone https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC
 下载完模型后会在本地创建QwQ-32B-q4f16_1-MLC目录
 可以新开一个窗口不停使用命令查看目前下载的进度，git clone下载大文件不会显示进度
 du -sh QwQ-32B-q4f16_1-MLC

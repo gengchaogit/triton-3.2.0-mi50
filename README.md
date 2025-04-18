@@ -71,7 +71,11 @@ python -m pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-rocm62 m
 https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC/tree/main
 ```
 温馨提示:git clone应该无需代理
+安装git-lfs
 git lfs install
+如果上面的命令不好使试试这个
+apt install git-lfs
+
 git clone https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC
 下载完模型后会在本地创建QwQ-32B-q4f16_1-MLC目录
 可以新开一个窗口不停使用命令查看目前下载的进度，git clone下载大文件不会显示进度

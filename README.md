@@ -70,6 +70,7 @@ python -m pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-rocm62 m
 
 https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC/tree/main
 ```
+温馨提示:git clone应该无需代理
 git lfs install
 GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/mlc-ai/QwQ-32B-q4f16_1-MLC
 下载完模型后会在本地创建QwQ-32B-q4f16_1-MLC目录

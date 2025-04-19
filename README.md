@@ -208,6 +208,9 @@ Triton3.2.0 编译安装教程结束，现在你可以编译最新版本的vllm�
 # Clone git
 git clone https://github.com/vllm-project/vllm.git
 cd vllm
+#由于vllm更新到了下一个版本，依赖改为了triton3.3.0因此在这里指定版本号为v0.8.3
+git checkout v0.8.3
+
 #如果你使用conda 使用下面命令代替source vllmenv/bin/activate
 #conda activate vllmnew
 

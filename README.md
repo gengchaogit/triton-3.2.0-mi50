@@ -21,7 +21,7 @@ sh Miniconda3-latest-Linux-x86_64.sh
 eval "$(/root/miniconda3/bin/conda shell.bash hook)"
 conda init
 conda --version
-conda config --set auto_activate_base ture
+conda config --set auto_activate_base true
 conda create --name mlc python=3.10
 conda activate mlc
 ```
@@ -117,7 +117,7 @@ sh Miniconda3-latest-Linux-x86_64.sh
 eval "$(/root/miniconda3/bin/conda shell.bash hook)"
 conda init
 conda --version
-conda config --set auto_activate_base ture
+conda config --set auto_activate_base true
 conda create --name vllmnew python=3.10
 conda activate vllmnew
 ```

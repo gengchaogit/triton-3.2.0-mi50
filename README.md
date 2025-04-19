@@ -229,6 +229,7 @@ pip install -r requirements/rocm.txt
 export PYTORCH_ROCM_ARCH="gfx906"
 python3 setup.py develop --verbose
 #如果遇到cmake 3.5的问题，就去那个文件里开头第十几行把小于3.5的3.x版本改成3.5保存即可
+sed -i '21s/3.3/3.5/' /opt/rocm/lib/cmake/hiprtc/hiprtc-config.cmake
 
 #如果本次安装某些地方安装依赖覆盖掉了魔改版的triton需要你返回dist重新安装编译好的triton
 #pip install triton-3.2.0-cp310-cp310-linux_x86_64.whl --force-reinstall

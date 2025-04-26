@@ -1,3 +1,33 @@
+Updated:20250426 16:00
+
+mlc首发比较快，文本长了以后会降速，超过1万多字，群友反馈降速约一半，因此还是推荐使用vllm。
+
+vllm安装后如果跑gguf单发还是比较快的，但是几乎没有并发能力。只能归结于vllm对gguf的优化不好。
+
+经过一段时间的摸索，我们找到了vllm在amd显卡下并发效率最高的量化模型，gptq。
+
+理论上任何gptq的量化模型均能使用mi50带来非常好的并发效果。大家可以去魔塔自行下载模型使用vllm运行gptq量化模型，可以获得目前最好的体验。
+
+但是需要注意的是gptq的如果使用老显卡跑，问题短了会感叹号，官方给的方案是，在问题里塞垃圾字符，破除这个乱码的限制。但是今天搜索，似乎已经有新版的模型解决了感叹号问题。
+
+```
+pip install modelscope
+modelscope download --model tclf90/qwq-32b-gptq-int8
+modelscope download --model tclf90/qwq-32b-gptq-int4
+```
+
+```
+https://modelscope.cn/models/tclf90/qwq-32b-gptq-int4
+https://modelscope.cn/models/tclf90/qwq-32b-gptq-int8
+【模型更新日期】
+2025-04-24
+1. add group 128v3
+2. 用黑科技修掉之前 Compute 7 显卡（GPTQ格式）运行时候出现的感叹号问题
+3. 删除对话模板的<think>字符，使得模型作答的时候，能完整吐出<think>模块
+4. 提供一个无思考模式的对话模板（tokenizer_config-无思考模式.json）供参考把玩。
+```
+
+
 Updated:20250418 16:00
 
 因为本人买了10卡gpu服务器做测试，发现vllm对x99平台的多卡机器优化可能有问题，所以研究了另外一个张量并行的框架。
